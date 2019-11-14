@@ -3,8 +3,10 @@ import { Route, Switch, Link } from 'react-router-dom';
 import styled from 'styled-components'
 
 import dummyStore from './dummy-store.js';
-import HomePage from './pages/HomePage.js';
+// import HomePage from './pages/HomePage.js';
 import SideBar from './components/SideBar.js';
+import Notes from './components/Notes.js';
+
 // import FolderPage from './pages/FolderPage.js';
 // import UserPage from './pages/UserPage';
 
@@ -17,6 +19,17 @@ export default function App() {
   const [folders, setFolders] = useState(dummyStore.folders);
   const [notes, setNotes] = useState(dummyStore.notes);
   const [currentFolderId, setCurrentFolderId] = useState(false);
+  const [currentNote, setCurrentNote] = useState(false);
+
+  const handleSetCurrentNote = note => {
+    setCurrentFolderId(false);
+    setCurrentNote(note);
+  }
+
+  const handleSetCurrentFolderId = folderId => {
+    setCurrentFolderId(folderId);
+    setCurrentNote(false);
+  }
 
   function renderSideBar() {
     return (
@@ -27,7 +40,8 @@ export default function App() {
             <SideBar
               folders={folders}
               currentFolderId={currentFolderId}
-              setCurrentFolderId={setCurrentFolderId}
+              handleSetCurrentFolderId={handleSetCurrentFolderId}
+              currentNote={currentNote}
               {...props}
             />
           )}
@@ -37,21 +51,18 @@ export default function App() {
   }
 
   function renderNotes() {
-    if (currentFolderId) {
-      let filteredNotes = notes.filter(note => note.folderId === currentFolderId);
-      return (
-        filteredNotes.map(note => (
-          <li>{note.name} - [{dummyStore.folders.find(folder => folder.id === note.folderId).name}]</li>
-        ))
-      )
-    } else {
-      return (
-        notes.map(note => (
-          <li>{note.name} - [{dummyStore.folders.find(folder => folder.id === note.folderId).name}]</li>
-        ))
-      );
-    }
 
+
+    return (
+      <Notes
+        notes={notes}
+        currentNote={currentNote}
+        handleSetCurrentNote={handleSetCurrentNote}
+        folders={folders}
+        currentFolderId={currentFolderId}
+        handleSetCurrentFolderId={handleSetCurrentFolderId}
+      ></Notes>
+    )
 
 
   }
@@ -69,11 +80,6 @@ export default function App() {
         <RightContainer>
           <h1>Notes:</h1>
           {renderNotes()}
-          {/* <ul>
-            {notes.map(note => (
-              <li>{note.name} - [{dummyStore.folders.find(folder => folder.id === note.folderId).name}]</li>
-            ))}
-          </ul> */}
         </RightContainer>
       </Container>
     </>
